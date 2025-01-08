@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
+from .models import *
 
 class LoginSerializers(serializers.Serializer):
     username = serializers.CharField(required=True)
@@ -30,3 +31,8 @@ class RegistrationSerializers(serializers.ModelSerializer):
         account.is_active = False
         account.save()
         return account
+    
+class ContactSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Contact
+        fields = "__all__"         

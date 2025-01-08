@@ -2,6 +2,7 @@ from django.shortcuts import redirect
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
+from rest_framework import viewsets
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
@@ -70,3 +71,7 @@ def activate_user(request, uid64, token):
         return redirect("login")
     else:
         return redirect('register')
+    
+class ContactViewSet(viewsets.ModelViewSet):
+    queryset = Contact.objects.all()
+    serializer_class = ContactSerializers

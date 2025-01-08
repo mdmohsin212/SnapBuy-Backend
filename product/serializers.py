@@ -20,7 +20,7 @@ class CartSerializer(serializers.ModelSerializer):
         
     def get_product_img(self, obj):
         data = ProductSerializer(obj.product).data.get('img')
-        return f"http://127.0.0.1:8000/{data}"
+        return f"https://snapbuy-backend.onrender.com{data}"
     
     def get_product_title(self, obj):
         return ProductSerializer(obj.product).data.get('title')
