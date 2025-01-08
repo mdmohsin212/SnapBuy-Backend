@@ -1,6 +1,5 @@
 from pathlib import Path
 import environ
-import psycopg2
 import os
 env = environ.Env()
 environ.Env.read_env()
