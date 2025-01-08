@@ -7,9 +7,13 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = '__all__'
         
 class ProductSerializer(serializers.ModelSerializer):
+    category_name = serializers.SerializerMethodField()
     class Meta:
         model = Product
         fields = '__all__'
+    
+    def get_category_name(self, obj):
+        return [category.name for category in obj.category.all()]
         
 class CartSerializer(serializers.ModelSerializer):
     product_img = serializers.SerializerMethodField()
