@@ -64,23 +64,17 @@ TEMPLATES = [
 WSGI_APPLICATION = 'SnapBuy.wsgi.application'
 
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': env("dbname"),
-#         'USER': env("user"),
-#         'PASSWORD': env("password"),
-#         'HOST': env("host"),
-#         'PORT': env("port")
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env("dbname"),
+        'USER': env("user"),
+        'PASSWORD': env("password"),
+        'HOST': env("host"),
+        'PORT': env("port")
     }
 }
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
