@@ -12,7 +12,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
-CSRF_TRUSTED_ORIGINS = ['https://nexthire-backend.onrender.com', 'https://*.127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ['https://snapbuy-backend.onrender.com', 'https://*.127.0.0.1']
 
 
 INSTALLED_APPS = [
