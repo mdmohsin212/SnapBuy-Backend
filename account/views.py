@@ -40,7 +40,7 @@ class RegistationView(APIView):
             user = serializer.save()
             user_token = default_token_generator.make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
-            link = f"http://127.0.0.1:8000/user/activate/{uid}/{user_token}"
+            link = f"https://snapbuy-backend.onrender.com/user/activate/{uid}/{user_token}"
 
             email_sub = "Activate your Account"
             email_body = render_to_string('confirme_mail.html',{'confirm_link' : link, 'user' : user})
