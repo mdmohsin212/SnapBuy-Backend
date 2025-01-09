@@ -18,6 +18,7 @@ class ProductSerializer(serializers.ModelSerializer):
 class CartSerializer(serializers.ModelSerializer):
     product_img = serializers.SerializerMethodField()
     product_title = serializers.SerializerMethodField()
+    product_price = serializers.SerializerMethodField()
     class Meta:
         model = Cart
         fields = '__all__'
@@ -28,3 +29,6 @@ class CartSerializer(serializers.ModelSerializer):
     
     def get_product_title(self, obj):
         return ProductSerializer(obj.product).data.get('title')
+    
+    def get_product_price(self, obj):
+        return ProductSerializer(obj.product).data.get('price')
