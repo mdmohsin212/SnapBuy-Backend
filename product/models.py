@@ -12,7 +12,7 @@ class Product(models.Model):
     name = models.CharField(max_length=50)
     title = models.CharField(max_length=100)
     description = models.TextField()
-    price = models.DecimalField(decimal_places=1, max_digits=5)
+    price = models.DecimalField(decimal_places=1, max_digits=7)
     category = models.ManyToManyField(Category)
     img = models.ImageField(upload_to='images/')
     
