@@ -12,6 +12,7 @@ from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
 from .serializers import *
 from .models import *
+from django.http import HttpResponseRedirect
 
 # Create your views here.
 
@@ -68,9 +69,9 @@ def activate_user(request, uid64, token):
     if user is not None and default_token_generator.check_token(user, token):
         user.is_active = True
         user.save()
-        return redirect("login")
+        return HttpResponseRedirect("https://snapbuy-frontend.onrender.com/login")
     else:
-        return redirect('register')
+        return HttpResponseRedirect("https://snapbuy-frontend.onrender.com/signup")
     
 class ContactViewSet(viewsets.ModelViewSet):
     queryset = Contact.objects.all()

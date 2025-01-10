@@ -64,7 +64,7 @@ class PaymentSuccessView(APIView):
                 carts = Cart.objects.filter(user_id=user_id)
                 carts.delete()
 
-                return HttpResponseRedirect('https://snapbuy-frontend.onrender.com/')
+                return HttpResponseRedirect('https://snapbuy-frontend.onrender.com/profile')
 
             return Response({'error': 'Transaction not found or invalid.'}, status=status.HTTP_400_BAD_REQUEST)
 
