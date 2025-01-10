@@ -5,3 +5,8 @@ class CheckoutSerializers(serializers.ModelSerializer):
     class Meta:
         model = Checkout
         fields = "__all__"
+        
+class OrderItemSerializres(serializers.ModelSerializer):
+    class Meta:
+        model = OrderdItem
+        fields = "__all__"

@@ -5,6 +5,7 @@ from .views import *
 router = DefaultRouter()
 
 router.register('checkout', CheckoutViewSet)
+router.register("orderitem", OrderItemView)
 
 urlpatterns = [
     path('', include(router.urls)),

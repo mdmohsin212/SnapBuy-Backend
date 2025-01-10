@@ -12,29 +12,7 @@ import random, string
 class CheckoutViewSet(viewsets.ModelViewSet):
     queryset = Checkout.objects.all()   
     serializer_class = CheckoutSerializers
-    
-    # def create(self, request, *args, **kwargs):
-    #     user = request.data.get("user")
-    #     order = request.data.get("Order", False)
         
-    #     item = Checkout.objects.filter(user=user, Order=order).first()
-    #     if item:
-    #         serializer = self.get_serializer(item, data=request.data, partial=True)
-    #         serializer.is_valid()
-    #         serializer.save()
-    #         return Response(serializer.data, status=status.HTTP_200_OK)
-    #     else:
-    #         serializer = self.get_serializer(data=request.data)
-    #         if serializer.is_valid():
-    #             serializer.save()
-    #             return Response(serializer.data, status=status.HTTP_201_CREATED)
-    #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        
-        
-def unique_transaction_id_generator(size=10, chars=string.ascii_uppercase + string.digits):
-    return "".join(random.choice(chars) for _ in range(size))
-    
 class payment(APIView):
     def post(self, request, user_id, *args, **kwargs):
         user = User.objects.get(id=user_id)
@@ -45,12 +23,12 @@ class payment(APIView):
             'issandbox': True,
         }
         sslcz = SSLCOMMERZ(settings)
-        data.tran_id = unique_transaction_id_generator()
+        print(data.tran_id)
         post_body = {
             'total_amount': data.total_amount,
             'currency': "BDT",
             'tran_id': data.tran_id,
-            'success_url': f"https://snapbuy-backend.onrender.com/payment/payment-success/{user_id}",
+            'success_url': f"https://snapbuy-backend.onrender.com/payment/payment-success/{user_id}/",
             'fail_url': "https://snapbuy-frontend.onrender.com/cart",
             'cancel_url': "https://snapbuy-frontend.onrender.com/cart",
             'emi_option': 0,
@@ -77,21 +55,23 @@ class PaymentSuccessView(APIView):
         try:
             payment_data = request.data
             tran_id = payment_data.get('tran_id')
-
             checkout = Checkout.objects.filter(tran_id=tran_id, Order=False).first()
 
             if checkout:
                 checkout.Order = True
                 checkout.status = "COMPLETE"
                 checkout.save()
-
-                carts = checkout.cart.all()
-                for cart in carts:
-                    cart.delete()
+                carts = Cart.objects.filter(user_id=user_id)
+                carts.delete()
 
                 return HttpResponseRedirect('https://snapbuy-frontend.onrender.com/')
 
             return Response({'error': 'Transaction not found or invalid.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except:
+            return Response({'error': "Something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
+class OrderItemView(viewsets.ModelViewSet):
+    queryset = OrderdItem.objects.all()   
+    serializer_class = OrderItemSerializres
