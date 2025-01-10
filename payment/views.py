@@ -94,6 +94,7 @@ class PaymentSuccessView(APIView):
 class OrderItemView(viewsets.ModelViewSet):
     queryset = OrderdItem.objects.all()   
     serializer_class = OrderItemSerializres
+    filter_backends = [Search]
     
 
 def status(request, user_id):
