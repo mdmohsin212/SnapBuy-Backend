@@ -11,4 +11,5 @@ urlpatterns = [
     path('', include(router.urls)),
     path('make_payment/<int:user_id>/', payment.as_view(), name='make_payment'),
     path('payment-success/<int:user_id>/', PaymentSuccessView.as_view(), name='payment-success'),
+    path('status/<int:user_id>/', status, name="status"),
 ]

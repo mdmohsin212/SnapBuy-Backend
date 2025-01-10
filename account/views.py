@@ -13,6 +13,7 @@ from django.core.mail import EmailMultiAlternatives
 from .serializers import *
 from .models import *
 from django.http import HttpResponseRedirect
+from rest_framework import filters
 
 # Create your views here.
 
@@ -76,3 +77,15 @@ def activate_user(request, uid64, token):
 class ContactViewSet(viewsets.ModelViewSet):
     queryset = Contact.objects.all()
     serializer_class = ContactSerializers
+
+
+class userSearch(filters.BaseFilterBackend):
+    def filter_queryset(self,request, query_set, view):
+        user_id = request.query_params.get("id")
+        if user_id:
+            return query_set.filter(user__id=user_id)
+
+class ProfileViewSet(viewsets.ModelViewSet):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializers
+    filter_backends = [userSearch]

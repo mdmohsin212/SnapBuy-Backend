@@ -6,12 +6,23 @@ from sslcommerz_lib import SSLCOMMERZ
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.http import HttpResponseRedirect
-import random, string
+from django.http import HttpResponseRedirect, JsonResponse
+from rest_framework.permissions import AllowAny
+from rest_framework import filters
+
+class Search(filters.BaseFilterBackend):
+    def filter_queryset(self,request, query_set, view):
+        user_id = request.query_params.get("user_id")
+        if user_id:
+            return query_set.filter(user__id=user_id)
+        return query_set
 
 class CheckoutViewSet(viewsets.ModelViewSet):
     queryset = Checkout.objects.all()   
     serializer_class = CheckoutSerializers
+    permission_classes = [AllowAny]
+    filter_backends = [Search]
+    
         
 class payment(APIView):
     def post(self, request, user_id, *args, **kwargs):
@@ -23,7 +34,6 @@ class payment(APIView):
             'issandbox': True,
         }
         sslcz = SSLCOMMERZ(settings)
-        print(data.tran_id)
         post_body = {
             'total_amount': data.total_amount,
             'currency': "BDT",
@@ -47,7 +57,7 @@ class payment(APIView):
         }
 
         response = sslcz.createSession(post_body)
-        return Response({'payment_url': response['GatewayPageURL']}, status=status.HTTP_200_OK)
+        return Response({'payment_url': response['GatewayPageURL']})
 
 
 class PaymentSuccessView(APIView):
@@ -61,17 +71,42 @@ class PaymentSuccessView(APIView):
                 checkout.Order = True
                 checkout.status = "COMPLETE"
                 checkout.save()
+
                 carts = Cart.objects.filter(user_id=user_id)
+                for cart in carts:
+                    OrderdItem.objects.create(
+                        user=cart.user,
+                        product=cart.product,
+                        price=cart.product.price,
+                        tran_id=tran_id
+                    )
                 carts.delete()
 
                 return HttpResponseRedirect('https://snapbuy-frontend.onrender.com/profile')
 
-            return Response({'error': 'Transaction not found or invalid.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Transaction not found or invalid.'})
 
-        except:
-            return Response({'error': "Something went wrong"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception as e:
+            return Response({'error': "Something went wrong", "details": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
         
         
 class OrderItemView(viewsets.ModelViewSet):
     queryset = OrderdItem.objects.all()   
     serializer_class = OrderItemSerializres
+    
+
+def status(request, user_id):
+    try:
+        user = User.objects.get(id=user_id)
+        checkout = Checkout.objects.filter(user=user).first()
+        
+        if checkout:
+            if checkout.Order == False:
+                return JsonResponse({'status' : "YES"})
+            else:
+                return JsonResponse({'status' : "NO"})
+        else:
+            return JsonResponse({'status' : "NO"})
+    except User.DoesNotExist:
+        return JsonResponse({"error" : "Not found user"})

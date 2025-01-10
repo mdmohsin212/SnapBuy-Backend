@@ -30,9 +30,26 @@ class RegistrationSerializers(serializers.ModelSerializer):
         account.set_password(password)
         account.is_active = False
         account.save()
+        Profile.objects.create(user=account)
         return account
     
 class ContactSerializers(serializers.ModelSerializer):
     class Meta:
         model = Contact
-        fields = "__all__"         
+        fields = "__all__"
+
+class ProfileSerializers(serializers.ModelSerializer):
+    user = serializers.SerializerMethodField()
+    class Meta:
+        model = Profile
+        fields = "__all__"
+        
+    def get_user(self, obj):
+        user = obj.user
+        return {
+            "id" : user.id,
+            "username": user.username,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "email": user.email,
+        }
