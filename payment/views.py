@@ -50,7 +50,7 @@ class payment(APIView):
             'total_amount': data.total_amount,
             'currency': "BDT",
             'tran_id': data.tran_id,
-            'success_url': "https://snapbuy-backend.onrender.com/payment/payment-webhook/",
+            'success_url': f"https://snapbuy-backend.onrender.com/payment/payment-success/{user_id}",
             'fail_url': "https://snapbuy-frontend.onrender.com/cart",
             'cancel_url': "https://snapbuy-frontend.onrender.com/cart",
             'emi_option': 0,
