@@ -91,7 +91,7 @@ class PaymentWebhookView(APIView):
                 for cart in carts:
                     cart.delete()
 
-                return HttpResponseRedirect('https://foreverstoree.netlify.app/myorders')
+                return HttpResponseRedirect('https://snapbuy-frontend.onrender.com/')
 
             return Response({'error': 'Transaction not found or invalid.'}, status=status.HTTP_400_BAD_REQUEST)
 
