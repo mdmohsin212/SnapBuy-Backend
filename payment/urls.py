@@ -9,5 +9,5 @@ router.register('checkout', CheckoutViewSet)
 urlpatterns = [
     path('', include(router.urls)),
     path('make_payment/<int:user_id>/', payment.as_view(), name='make_payment'),
-    path('payment-webhook/', PaymentWebhookView.as_view(), name='payment-webhook'),
+    path('payment-success/<int:user_id>/', PaymentSuccessView.as_view(), name='payment-success'),
 ]

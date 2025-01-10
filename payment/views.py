@@ -13,22 +13,22 @@ class CheckoutViewSet(viewsets.ModelViewSet):
     queryset = Checkout.objects.all()   
     serializer_class = CheckoutSerializers
     
-    def create(self, request, *args, **kwargs):
-        user = request.data.get("user")
-        order = request.data.get("Order", False)
+    # def create(self, request, *args, **kwargs):
+    #     user = request.data.get("user")
+    #     order = request.data.get("Order", False)
         
-        item = Checkout.objects.filter(user=user, Order=order).first()
-        if item:
-            serializer = self.get_serializer(item, data=request.data, partial=True)
-            serializer.is_valid()
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            serializer = self.get_serializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    #     item = Checkout.objects.filter(user=user, Order=order).first()
+    #     if item:
+    #         serializer = self.get_serializer(item, data=request.data, partial=True)
+    #         serializer.is_valid()
+    #         serializer.save()
+    #         return Response(serializer.data, status=status.HTTP_200_OK)
+    #     else:
+    #         serializer = self.get_serializer(data=request.data)
+    #         if serializer.is_valid():
+    #             serializer.save()
+    #             return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         
         
@@ -50,7 +50,7 @@ class payment(APIView):
             'total_amount': data.total_amount,
             'currency': "BDT",
             'tran_id': data.tran_id,
-            'success_url': "127.0.0.1:8000/payment/payment-webhook",
+            'success_url': "https://snapbuy-backend.onrender.com/payment/payment-webhook/",
             'fail_url': "https://snapbuy-frontend.onrender.com/cart",
             'cancel_url': "https://snapbuy-frontend.onrender.com/cart",
             'emi_option': 0,
@@ -72,7 +72,7 @@ class payment(APIView):
         return Response({'payment_url': response['GatewayPageURL']}, status=status.HTTP_200_OK)
 
 
-class PaymentWebhookView(APIView):
+class PaymentSuccessView(APIView):
     def post(self, request, user_id, *args, **kwargs):
         try:
             payment_data = request.data
@@ -82,7 +82,7 @@ class PaymentWebhookView(APIView):
 
             if checkout:
                 checkout.Order = True
-                checkout.status = "success"
+                checkout.status = "COMPLETE"
                 checkout.save()
 
                 carts = checkout.cart.all()
