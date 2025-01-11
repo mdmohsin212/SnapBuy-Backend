@@ -13,7 +13,7 @@ DEBUG = True
 
 LOGIN = 'https://snapbuy-frontend.onrender.com/login'
 
-ALLOWED_HOSTS = ["127.0.0.1", ".vercel.app"]
+ALLOWED_HOSTS = ["*"]
 
 CSRF_TRUSTED_ORIGINS = ['https://snapbuy-backend.onrender.com', 'https://*.127.0.0.1','https://snapbuy-frontend.onrender.com']
 
@@ -77,7 +77,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'SnapBuy.wsgi.app'
+WSGI_APPLICATION = 'SnapBuy.wsgi.application'
 
 
 DATABASES = {
