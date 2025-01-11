@@ -1,10 +1,12 @@
 from pathlib import Path
 import environ
+import dj_database_url
 import os
 env = environ.Env()
-environ.Env.read_env()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+environ.Env.read_env(BASE_DIR / '.env')
 
 SECRET_KEY = env("SECRET_KEY")
 
@@ -12,7 +14,7 @@ DEBUG = True
 
 LOGIN = 'https://snapbuy-frontend.onrender.com/login'
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["127.0.0.1", ".vercel.app"]
 
 CSRF_TRUSTED_ORIGINS = ['https://snapbuy-backend.onrender.com', 'https://*.127.0.0.1','https://snapbuy-frontend.onrender.com']
 
@@ -26,8 +28,8 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 
 INSTALLED_APPS = [
-    'corsheaders',
     "whitenoise.runserver_nostatic",
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -76,7 +78,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'SnapBuy.wsgi.application'
+WSGI_APPLICATION = 'SnapBuy.wsgi.app'
 
 
 DATABASES = {
