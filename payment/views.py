@@ -95,22 +95,22 @@ class PaymentSuccessView(APIView):
             return Response({'error': "Something went wrong"})
 
 
-class PaymentFailedView(APIView):
-    def post(self, request, user_id, *args, **kwargs):
-        try:
-            payment_data = request.data
-            tran_id = payment_data.get('tran_id')
-            checkout = Checkout.objects.filter(tran_id=tran_id, Order=False).first()
+# class PaymentFailedView(APIView):
+#     def post(self, request, user_id, *args, **kwargs):
+#         try:
+#             payment_data = request.data
+#             tran_id = payment_data.get('tran_id')
+#             checkout = Checkout.objects.filter(tran_id=tran_id, Order=False).first()
 
-            if checkout:
-                checkout.Order = True
-                checkout.status = "FAILED"
-                checkout.save()
+#             if checkout:
+#                 checkout.Order = True
+#                 checkout.status = "FAILED"
+#                 checkout.save()
             
-            return HttpResponseRedirect('https://snapbuy-frontend.onrender.com/cart')
+#             return HttpResponseRedirect('https://snapbuy-frontend.onrender.com/cart')
         
-        except Exception:
-            return Response({'error': "Something went wrong"})
+#         except Exception:
+#             return Response({'error': "Something went wrong"})
         
 
 class OrderItemView(viewsets.ModelViewSet):
@@ -122,14 +122,12 @@ class OrderItemView(viewsets.ModelViewSet):
 def status(request, user_id):
     try:
         user = User.objects.get(id=user_id)
-        checkout = Checkout.objects.filter(user=user).first()
+        checkouts = Checkout.objects.filter(user=user)
         
-        if checkout:
+        for checkout in checkouts:
             if checkout.Order == False:
-                return JsonResponse({'status' : "YES", 'id' : checkout.id})
-            else:
-                return JsonResponse({'status' : "NO"})
-        else:
-            return JsonResponse({'status' : "NO"})
+                return JsonResponse({'status': "YES", 'id': checkout.id})
+            
+        return JsonResponse({'status': "NO"})
     except User.DoesNotExist:
-        return JsonResponse({"error" : "Not found user"})
+        return JsonResponse({"error": "Not found user"})
