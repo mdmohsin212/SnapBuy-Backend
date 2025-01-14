@@ -5,7 +5,6 @@ from rest_framework.authtoken.models import Token
 from rest_framework import viewsets
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
@@ -50,6 +49,7 @@ class RegistationView(APIView):
             email = EmailMultiAlternatives(email_sub, '', to=[user.email])
             email.attach_alternative(email_body,'text/html')
             email.send()
+            
             return Response("A confirmation email has been sent to your registered email address.")
         return Response(serializer.errors)
 
@@ -78,7 +78,6 @@ class ContactViewSet(viewsets.ModelViewSet):
     queryset = Contact.objects.all()
     serializer_class = ContactSerializers
 
-
 class userSearch(filters.BaseFilterBackend):
     def filter_queryset(self,request, query_set, view):
         user_id = request.query_params.get("id")
@@ -91,11 +90,14 @@ class ProfileViewSet(viewsets.ModelViewSet):
     filter_backends = [userSearch]
     
 class PasswordChangeAPIView(APIView):
-    def post(self, request):
-        form = PasswordChangeForm(request.user, data=request.data)
-        if form.is_valid():
-            form.save()
-            update_session_auth_hash(request, form.user)
-            return Response({"message": "Password changed successfully"})
-        else:
-            return Response({"errors": form.errors})
+    def post(self, request, user_id):
+        user = User.objects.get(id=user_id)
+        old_password = request.data.get("old_password")
+        new_password = request.data.get("new_password")
+        
+        if not user.check_password(old_password):
+            return Response({"error": "Old password is incorrect."})
+        user.set_password(new_password)
+        user.save()
+        update_session_auth_hash(request, user)
+        return Response({"message": "Password changed successfully."})

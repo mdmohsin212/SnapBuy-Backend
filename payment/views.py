@@ -1,14 +1,15 @@
-from django.shortcuts import redirect
 from .serializers import *
 from .models import *
 from rest_framework import viewsets
 from sslcommerz_lib import SSLCOMMERZ
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
 from django.http import HttpResponseRedirect, JsonResponse
 from rest_framework.permissions import AllowAny
 from rest_framework import filters
+from django.utils.encoding import force_bytes
+from django.template.loader import render_to_string
+from django.core.mail import EmailMultiAlternatives
 
 class Search(filters.BaseFilterBackend):
     def filter_queryset(self,request, query_set, view):
@@ -63,6 +64,7 @@ class payment(APIView):
 class PaymentSuccessView(APIView):
     def post(self, request, user_id, *args, **kwargs):
         try:
+            user = User.objects.get(id=user_id)
             payment_data = request.data
             tran_id = payment_data.get('tran_id')
             checkout = Checkout.objects.filter(tran_id=tran_id, Order=False).first()
@@ -87,6 +89,15 @@ class PaymentSuccessView(APIView):
                     )
                 carts.delete()
 
+                
+                # email_sub = "Successfully Buy Product"
+                # email_body = render_to_string('Buying_Product.html',{'user': user,
+                #         'tran_id': tran_id,
+                #         'checkout': checkout})
+                # email = EmailMultiAlternatives(email_sub, '', to=[user.email])
+                # email.attach_alternative(email_body,'text/html')
+                # email.send()
+                
                 return HttpResponseRedirect('https://snapbuy-frontend.onrender.com/profile')
 
             return Response({'error': 'Transaction not found or invalid.'})
