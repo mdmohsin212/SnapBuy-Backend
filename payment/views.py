@@ -39,8 +39,8 @@ class payment(APIView):
             'currency': "BDT",
             'tran_id': data.tran_id,
             'success_url': f"https://snapbuy-backend.onrender.com/payment/payment-success/{user_id}/",
-            'fail_url': "https://snapbuy-frontend.onrender.com/cart",
-            'cancel_url': "https://snapbuy-frontend.onrender.com/cart",
+            'fail_url': f"https://snapbuy-backend.onrender.com/payment/payment-failed/{user_id}/",
+            'cancel_url': f"https://snapbuy-backend.onrender.com/payment/payment-failed/{user_id}/",
             'emi_option': 0,
             'cus_name': data.name,
             'cus_email': data.email,
@@ -95,22 +95,22 @@ class PaymentSuccessView(APIView):
             return Response({'error': "Something went wrong"})
 
 
-# class PaymentFailedView(APIView):
-#     def post(self, request, user_id, *args, **kwargs):
-#         try:
-#             payment_data = request.data
-#             tran_id = payment_data.get('tran_id')
-#             checkout = Checkout.objects.filter(tran_id=tran_id, Order=False).first()
+class PaymentFailedView(APIView):
+    def post(self, request, user_id, *args, **kwargs):
+        try:
+            payment_data = request.data
+            tran_id = payment_data.get('tran_id')
+            checkout = Checkout.objects.filter(tran_id=tran_id, Order=False).first()
 
-#             if checkout:
-#                 checkout.Order = True
-#                 checkout.status = "FAILED"
-#                 checkout.save()
+            if checkout:
+                checkout.Order = True
+                checkout.status = "FAILED"
+                checkout.save()
             
-#             return HttpResponseRedirect('https://snapbuy-frontend.onrender.com/cart')
+            return HttpResponseRedirect('https://snapbuy-frontend.onrender.com/cart')
         
-#         except Exception:
-#             return Response({'error': "Something went wrong"})
+        except Exception:
+            return Response({'error': "Something went wrong"})
         
 
 class OrderItemView(viewsets.ModelViewSet):
