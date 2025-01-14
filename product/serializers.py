@@ -32,3 +32,9 @@ class CartSerializer(serializers.ModelSerializer):
     
     def get_product_price(self, obj):
         return ProductSerializer(obj.product).data.get('price')
+    
+
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = "__all__"

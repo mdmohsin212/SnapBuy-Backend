@@ -77,6 +77,11 @@ class PaymentSuccessView(APIView):
                     OrderdItem.objects.create(
                         user=cart.user,
                         product=cart.product,
+                        buyer_name = checkout.name,
+                        email = checkout.email,
+                        address = checkout.address,
+                        status = checkout.status,
+                        quantity = cart.quantity,
                         price=cart.product.price,
                         tran_id=tran_id
                     )
@@ -86,13 +91,30 @@ class PaymentSuccessView(APIView):
 
             return Response({'error': 'Transaction not found or invalid.'})
 
-        except Exception as e:
-            return Response({'error': "Something went wrong", "details": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception:
+            return Response({'error': "Something went wrong"})
 
+
+class PaymentFailedView(APIView):
+    def post(self, request, user_id, *args, **kwargs):
+        try:
+            payment_data = request.data
+            tran_id = payment_data.get('tran_id')
+            checkout = Checkout.objects.filter(tran_id=tran_id, Order=False).first()
+
+            if checkout:
+                checkout.Order = True
+                checkout.status = "FAILED"
+                checkout.save()
+            
+            return HttpResponseRedirect('https://snapbuy-frontend.onrender.com/cart')
         
+        except Exception:
+            return Response({'error': "Something went wrong"})
         
+
 class OrderItemView(viewsets.ModelViewSet):
-    queryset = OrderdItem.objects.all()   
+    queryset = OrderdItem.objects.all()
     serializer_class = OrderItemSerializres
     filter_backends = [Search]
     

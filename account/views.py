@@ -5,14 +5,14 @@ from rest_framework.authtoken.models import Token
 from rest_framework import viewsets
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
 from .serializers import *
 from .models import *
-from django.http import HttpResponseRedirect
 from rest_framework import filters
 
 # Create your views here.
@@ -43,7 +43,7 @@ class RegistationView(APIView):
             user = serializer.save()
             user_token = default_token_generator.make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
-            link = f"http://127.0.0.1:8000/user/activate/{uid}/{user_token}"
+            link = f"https://snapbuy-backend.onrender.com/user/activate/{uid}/{user_token}"
 
             email_sub = "Activate your Account"
             email_body = render_to_string('confirme_mail.html',{'confirm_link' : link, 'user' : user})
@@ -89,3 +89,13 @@ class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializers
     filter_backends = [userSearch]
+    
+class PasswordChangeAPIView(APIView):
+    def post(self, request):
+        form = PasswordChangeForm(request.user, data=request.data)
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, form.user)
+            return Response({"message": "Password changed successfully"})
+        else:
+            return Response({"errors": form.errors})

@@ -26,3 +26,23 @@ class Cart(models.Model):
     
     def __str__(self):
         return f"{self.user} - {self.product.name}"
+
+STAR_CHOICES = [
+    ('⭐', '⭐'),
+    ('⭐⭐', '⭐⭐'),
+    ('⭐⭐⭐', '⭐⭐⭐'),
+    ('⭐⭐⭐⭐', '⭐⭐⭐⭐'),
+    ('⭐⭐⭐⭐⭐', '⭐⭐⭐⭐⭐'),
+]
+
+class Review(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    star = models.CharField(max_length=100, choices=STAR_CHOICES)
+    body = models.TextField()
+    created_time = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"{self.user.username} rate {self.product.name}"

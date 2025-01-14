@@ -10,3 +10,4 @@ class CategoryAdmin(admin.ModelAdmin):
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Product)
 admin.site.register(Cart)
+admin.site.register(Review)
