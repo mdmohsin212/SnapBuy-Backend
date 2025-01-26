@@ -8,6 +8,7 @@ class CategorySerializer(serializers.ModelSerializer):
         
 class ProductSerializer(serializers.ModelSerializer):
     category_name = serializers.SerializerMethodField()
+    get_rating = serializers.ReadOnlyField()
     class Meta:
         model = Product
         fields = '__all__'
