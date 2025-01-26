@@ -17,6 +17,11 @@ class CartSearch(filters.BaseFilterBackend):
         user_id = request.query_params.get("user_id")
         if user_id:
             return query_set.filter(user__id=user_id)
+        
+        product_id = request.query_params.get("product_id")
+        if product_id:
+            return query_set.filter(product=product_id)
+        
         return query_set
     
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -31,3 +36,4 @@ class CartViewSet(viewsets.ModelViewSet):
 class ReviewViewSet(viewsets.ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
+    filter_backends = [CartSearch]

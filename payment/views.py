@@ -7,9 +7,6 @@ from rest_framework.response import Response
 from django.http import HttpResponseRedirect, JsonResponse
 from rest_framework.permissions import AllowAny
 from rest_framework import filters
-from django.utils.encoding import force_bytes
-from django.template.loader import render_to_string
-from django.core.mail import EmailMultiAlternatives
 
 class Search(filters.BaseFilterBackend):
     def filter_queryset(self,request, query_set, view):
@@ -87,17 +84,7 @@ class PaymentSuccessView(APIView):
                         price=cart.product.price,
                         tran_id=tran_id
                     )
-                carts.delete()
-
-                
-                # email_sub = "Successfully Buy Product"
-                # email_body = render_to_string('Buying_Product.html',{'user': user,
-                #         'tran_id': tran_id,
-                #         'checkout': checkout})
-                # email = EmailMultiAlternatives(email_sub, '', to=[user.email])
-                # email.attach_alternative(email_body,'text/html')
-                # email.send()
-                
+                carts.delete()                
                 return HttpResponseRedirect('https://snapbuy-frontend.onrender.com/profile')
 
             return Response({'error': 'Transaction not found or invalid.'})
