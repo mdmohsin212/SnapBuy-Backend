@@ -7,11 +7,6 @@ from rest_framework.permissions import AllowAny
 
 # Create your views here.
 
-class ProductViewSet(viewsets.ModelViewSet):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-    permission_classes = [AllowAny]
-
 class CartSearch(filters.BaseFilterBackend):
     def filter_queryset(self,request, query_set, view):
         user_id = request.query_params.get("user_id")
@@ -22,7 +17,17 @@ class CartSearch(filters.BaseFilterBackend):
         if product_id:
             return query_set.filter(product=product_id)
         
+        category_name = request.query_params.get("category")
+        if category_name:
+            return query_set.filter(category__name__iexact=category_name)
+        
         return query_set
+    
+class ProductViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = [AllowAny]
+    filter_backends = [CartSearch]
     
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
