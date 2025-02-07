@@ -77,7 +77,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'SnapBuy.wsgi.application'
+WSGI_APPLICATION = 'SnapBuy.wsgi.app'
 
 
 DATABASES = {
