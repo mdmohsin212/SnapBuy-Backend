@@ -8,10 +8,10 @@ class CheckoutSerializers(serializers.ModelSerializer):
         fields = "__all__"
         
 class OrderItemSerializres(serializers.ModelSerializer):
-    product_title = serializers.SerializerMethodField()
+    product_name = serializers.SerializerMethodField()
     class Meta:
         model = OrderdItem
         fields = "__all__"
         
-    def get_product_title(self, obj):
-        return ProductSerializer(obj.product).data.get('title')
+    def get_product_name(self, obj):
+        return ProductSerializer(obj.product).data.get('name')
