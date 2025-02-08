@@ -11,5 +11,10 @@
       "src": "/(.*)",
       "dest": "SnapBuy/wsgi.py"
     }
-  ]
+  ],
+  "functions": {
+    "app/api/**/*": {
+      "maxDuration": 30
+    }
+  }
 }
