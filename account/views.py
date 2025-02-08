@@ -85,7 +85,7 @@ class userSearch(filters.BaseFilterBackend):
             return query_set.filter(user__id=user_id)
 
 class ProfileViewSet(viewsets.ModelViewSet):
-    queryset = Profile.objects.all()
+    queryset = Profile.objects.select_related("user")
     serializer_class = ProfileSerializers
     filter_backends = [userSearch]
     

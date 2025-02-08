@@ -15,12 +15,13 @@ class Search(filters.BaseFilterBackend):
             return query_set.filter(user__id=user_id)
         return query_set
 
+
 class CheckoutViewSet(viewsets.ModelViewSet):
-    queryset = Checkout.objects.all()   
+    queryset = Checkout.objects.select_related("user").prefetch_related("cart__product")
     serializer_class = CheckoutSerializers
     permission_classes = [AllowAny]
     filter_backends = [Search]
-    
+
         
 class payment(APIView):
     def post(self, request, user_id, *args, **kwargs):
@@ -112,15 +113,14 @@ class PaymentFailedView(APIView):
         
 
 class OrderItemView(viewsets.ModelViewSet):
-    queryset = OrderdItem.objects.all()
+    queryset = OrderdItem.objects.select_related("user", "product").prefetch_related("product__category")
     serializer_class = OrderItemSerializres
     filter_backends = [Search]
-    
+
 
 def status(request, user_id):
     try:
-        user = User.objects.get(id=user_id)
-        checkouts = Checkout.objects.filter(user=user)
+        checkouts = Checkout.objects.filter(user_id=user_id).only("id", "Order")
         
         for checkout in checkouts:
             if checkout.Order == False:

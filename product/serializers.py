@@ -27,7 +27,7 @@ class CartSerializer(serializers.ModelSerializer):
         fields = '__all__'
         
     def get_product_img(self, obj):
-        return f"https://snapbuy-backend.onrender.com{obj.product.img.url}"
+        return f"https://snap-buy-backend.vercel.app/{obj.product.img.url}"
 
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
