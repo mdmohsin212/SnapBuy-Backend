@@ -22,12 +22,7 @@ class Product(models.Model):
     
     @property
     def get_rating(self):
-        reviews = self.review_set.filter(product=self)
-        if reviews.exists():
-            total = sum([review.star for review in reviews])
-            rating = total / len(reviews)
-            return rating
-        return 0
+        return self.review_set.aggregate(avg_rating=Avg("star"))["avg_rating"] or 0
 
 class Cart(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

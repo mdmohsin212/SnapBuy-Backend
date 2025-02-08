@@ -9,31 +9,25 @@ class CategorySerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     category_name = serializers.SerializerMethodField()
     get_rating = serializers.ReadOnlyField()
+
     class Meta:
         model = Product
         fields = '__all__'
     
     def get_category_name(self, obj):
-        return [category.name for category in obj.category.all()]
+        return list(obj.category.values_list("name", flat=True))
         
 class CartSerializer(serializers.ModelSerializer):
     product_img = serializers.SerializerMethodField()
-    product_title = serializers.SerializerMethodField()
-    product_price = serializers.SerializerMethodField()
+    product_title = serializers.CharField(source="product.title", read_only=True)
+    product_price = serializers.DecimalField(source="product.price", max_digits=7, decimal_places=1, read_only=True)
+
     class Meta:
         model = Cart
         fields = '__all__'
         
     def get_product_img(self, obj):
-        data = ProductSerializer(obj.product).data.get('img')
-        return f"https://snapbuy-backend.onrender.com{data}"
-    
-    def get_product_title(self, obj):
-        return ProductSerializer(obj.product).data.get('title')
-    
-    def get_product_price(self, obj):
-        return ProductSerializer(obj.product).data.get('price')
-    
+        return f"https://snapbuy-backend.onrender.com{obj.product.img.url}"
 
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
