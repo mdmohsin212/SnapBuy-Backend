@@ -117,6 +117,9 @@ class OrderItemView(viewsets.ModelViewSet):
     serializer_class = OrderItemSerializres
     filter_backends = [Search]
 
+class ShippingViewSet(viewsets.ModelViewSet):
+    queryset = Shipping.objects.all()
+    serializer_class = ShippingSerializer
 
 def status(request, user_id):
     try:

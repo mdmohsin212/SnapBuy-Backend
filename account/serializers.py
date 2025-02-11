@@ -6,6 +6,10 @@ class LoginSerializers(serializers.Serializer):
     username = serializers.CharField(required=True)
     password = serializers.CharField(required=True)
     
+class AdminSerializers(serializers.Serializer):
+    username = serializers.CharField(required=True)
+    password = serializers.CharField(required=True)
+    
 
 class RegistrationSerializers(serializers.ModelSerializer):
     confirm_password = serializers.CharField(required=True)

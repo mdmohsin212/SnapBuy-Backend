@@ -32,4 +32,15 @@ class OrderdItem(models.Model):
     
     def __str__(self):
         return f"{self.user.username} - {self.product.name}"
+
+STATUS = [
+    ('Pending', 'Pending'),
+    ('Complete', 'Complete'),
+]
+
+class Shipping(models.Model):
+    product = models.ForeignKey(OrderdItem, on_delete=models.CASCADE)
+    status = models.CharField(choices=STATUS, default="Pending")
     
+    def __str__(self):
+        return self.product.name
