@@ -1,8 +1,7 @@
 from django.contrib import admin
-from .models import Checkout, OrderdItem, Shipping
+from .models import *
 
 # Register your models here.
 
 admin.site.register(Checkout)
 admin.site.register(OrderdItem)
-admin.site.register(Shipping)

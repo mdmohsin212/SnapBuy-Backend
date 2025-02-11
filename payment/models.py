@@ -17,6 +17,11 @@ class Checkout(models.Model):
     
     def __str__(self):  
         return self.name
+
+STATUS = [
+    ('Pending', 'Pending'),
+    ('Complete', 'Complete'),
+]
     
 class OrderdItem(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -28,19 +33,8 @@ class OrderdItem(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.IntegerField(blank=True, null=True)
     buying_time = models.DateTimeField(auto_now_add=True)
+    Shipping_status = models.CharField(choices=STATUS, default="Pending")
     tran_id = models.CharField(max_length=100)
     
     def __str__(self):
         return f"{self.user.username} - {self.product.name}"
-
-STATUS = [
-    ('Pending', 'Pending'),
-    ('Complete', 'Complete'),
-]
-
-class Shipping(models.Model):
-    product = models.ForeignKey(OrderdItem, on_delete=models.CASCADE)
-    status = models.CharField(choices=STATUS, default="Pending")
-    
-    def __str__(self):
-        return self.product.name

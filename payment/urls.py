@@ -6,7 +6,6 @@ router = DefaultRouter()
 
 router.register('checkout', CheckoutViewSet)
 router.register("orderitem", OrderItemView)
-router.register('shipping', ShippingViewSet, basename='shipping')
 
 urlpatterns = [
     path('', include(router.urls)),
