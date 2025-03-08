@@ -11,7 +11,7 @@ class Checkout(models.Model):
     address = models.CharField(max_length=200)
     zip = models.CharField(max_length=50)
     Order = models.BooleanField(default=False)  
-    total_amount = models.DecimalField(max_digits=7, decimal_places=2)
+    total_amount = models.DecimalField(max_digits=12, decimal_places=2)
     tran_id = models.CharField(max_length=100, blank=True, null=True)
     status = models.CharField(max_length=100, null=True, blank=True)
     
