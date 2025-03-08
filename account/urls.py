@@ -10,7 +10,7 @@ router.register('profile', ProfileViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('login/', LoginView.as_view(), name='login'),
+    path('login/', UserLoginView.as_view(), name='login'),
     path('admin/login/', AdminLoginView.as_view(), name='adminLogin'),
     path('register/', RegistationView.as_view(), name='register'),
     path('change_password/<int:user_id>/', PasswordChangeAPIView.as_view(), name='change_password'),

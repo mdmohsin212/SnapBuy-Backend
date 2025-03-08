@@ -1,6 +1,11 @@
 from pathlib import Path
 import environ
 import os
+import cloudinary
+import cloudinary.uploader
+from cloudinary.utils import cloudinary_url
+from datetime import timedelta
+
 env = environ.Env()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,6 +29,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
     'corsheaders',
+    'cloudinary',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -52,6 +58,11 @@ MIDDLEWARE = [
 
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=3),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
 }
 
 ROOT_URLCONF = 'SnapBuy.urls'
@@ -120,6 +131,16 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+CLOUDINARY_URL='cloudinary://431992882792381:8LvoO737JB5SNdK4hs49waoy_ls@djigbo7zo'
+
+cloudinary.config( 
+    cloud_name = "djigbo7zo", 
+    api_key = "431992882792381", 
+    api_secret = "8LvoO737JB5SNdK4hs49waoy_ls",
+    secure=True
+)
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

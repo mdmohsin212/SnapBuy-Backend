@@ -13,41 +13,50 @@ from django.core.mail import EmailMultiAlternatives
 from .serializers import *
 from .models import *
 from rest_framework import filters
+from rest_framework_simplejwt.tokens import RefreshToken
 
 # Create your views here.
 
-class LoginView(APIView):
+class UserLoginView(APIView):
     def post(self, request):
-        serializer = LoginSerializers(data=self.request.data)
+        serializer = LoginSerializers(data=request.data)
         if serializer.is_valid():
             username = serializer.validated_data['username']
             password = serializer.validated_data['password']
+
             user = authenticate(username=username, password=password)
-            print(user)
             if user:
-                token,_ = Token.objects.get_or_create(user=user)
                 login(request, user)
-                print(request.user.auth_token)
-                return Response({'token' : token.key, 'user_id' : user.id})
-            else:
-                return Response({'error' :'The provided credentials are invalid. Please check your email and password and try again.'})
-        return Response(serializer.errors)
+                refresh = RefreshToken.for_user(user)
+                return Response({
+                    'access': str(refresh.access_token),
+                    'refresh': str(refresh),
+                    'user_id': user.id,
+                    'role': user.profile.role
+                })
+            return Response({'error': 'Invalid Credentials'}, status=400)
+        return Response(serializer.errors, status=400)
 
 class AdminLoginView(APIView):
-        def post(self, request):
-            serializer = AdminSerializers(data=self.request.data)
-            if serializer.is_valid():
-                username = serializer.validated_data['username']
-                password = serializer.validated_data['password']
-                if username == "siam" and password == "123":
-                    user, _ = User.objects.get_or_create(username="siam", defaults={"password": "123"})  
-                    token, _ = Token.objects.get_or_create(user=user)
-                    login(request, user)
-                    
-                    return Response({'token': token.key, 'user_id': user.id})
-                else:
-                    return Response({'error' :'The provided credentials are invalid. Please check your username and password and try again.'})
-            return Response(serializer.errors)
+    def post(self, request):
+        serializer = AdminSerializers(data=request.data)
+        if serializer.is_valid():
+            username = serializer.validated_data['username']
+            password = serializer.validated_data['password']
+            if username == "siam" and password == "123":
+                user, _ = User.objects.get_or_create(username="siam", defaults={"password": "123"})
+                refresh = RefreshToken.for_user(user)
+                login(request, user)
+
+                return Response({
+                    'access': str(refresh.access_token),
+                    'refresh': str(refresh),
+                    'user_id': user.id
+                })
+            else:
+                return Response({'error': 'The provided credentials are invalid. Please check your username and password and try again.'}, status=400)
+        
+        return Response(serializer.errors, status=400)
 
 class RegistationView(APIView):
     serializer_class = RegistrationSerializers

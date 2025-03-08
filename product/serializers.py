@@ -7,6 +7,7 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = '__all__'
         
 class ProductSerializer(serializers.ModelSerializer):
+    img = serializers.SerializerMethodField()
     category_name = serializers.SerializerMethodField()
     get_rating = serializers.ReadOnlyField()
 
@@ -16,6 +17,9 @@ class ProductSerializer(serializers.ModelSerializer):
     
     def get_category_name(self, obj):
         return list(obj.category.values_list("name", flat=True))
+    
+    def get_img(self, obj):
+        return obj.img.url if obj.img else None
         
 class CartSerializer(serializers.ModelSerializer):
     product_img = serializers.SerializerMethodField()
@@ -26,8 +30,11 @@ class CartSerializer(serializers.ModelSerializer):
         model = Cart
         fields = '__all__'
         
+    # def get_product_img(self, obj):
+    #     return f"https://snap-buy-backend.vercel.app/{obj.product.img.url}"
+    
     def get_product_img(self, obj):
-        return f"https://snap-buy-backend.vercel.app/{obj.product.img.url}"
+        return obj.product.img.url if obj.product.img.url else None
 
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:

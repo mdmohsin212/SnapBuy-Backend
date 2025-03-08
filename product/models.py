@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Avg
+from cloudinary.models import CloudinaryField
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -15,7 +16,7 @@ class Product(models.Model):
     description = models.TextField()
     price = models.DecimalField(decimal_places=1, max_digits=7)
     category = models.ManyToManyField(Category)
-    img = models.ImageField(upload_to='images/')
+    img = CloudinaryField("image", blank=True, null=True)
 
     def __str__(self):
         return self.name
