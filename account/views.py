@@ -32,7 +32,6 @@ class UserLoginView(APIView):
                     'access': str(refresh.access_token),
                     'refresh': str(refresh),
                     'user_id': user.id,
-                    'role': user.profile.role
                 })
             return Response({'error': 'Invalid Credentials'}, status=400)
         return Response(serializer.errors, status=400)
